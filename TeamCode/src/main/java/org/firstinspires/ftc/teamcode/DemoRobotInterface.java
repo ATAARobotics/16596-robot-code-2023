@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,13 +13,18 @@ class DemoRobotInterface {
     public DcMotor elevatorm = null;
     public Servo clawF = null;
     public Servo clawS = null;
+    public ColorSensor color = null;
 
     public DemoRobotInterface(HardwareMap hardwareMap, Telemetry telemetry) {
         frm = hardwareMap.get(DcMotor.class, "FrontRightMotor");
         flm = hardwareMap.get(DcMotor.class, "FrontLeftMotor");
         elevatorm = hardwareMap.get(DcMotor.class, "Elevator");
+
         clawF = hardwareMap.get(Servo.class, "ClawServoOne");
         clawS = hardwareMap.get(Servo.class, "ClawServoTwo");
+
+        color = hardwareMap.get(ColorSensor.class, "Color");
+
 
     }
 }
