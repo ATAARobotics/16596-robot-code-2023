@@ -59,11 +59,14 @@ public class KiwiDrive extends OpMode {
 
     // setup for various controls
     private GamepadEx gamepadex1 = null;
+    private GamepadEx gamepadex2 = null;
     private ButtonReader bump_left = null;
     private ButtonReader bump_right = null;
     private ButtonReader button_a = null;
     private TriggerReader trigger_left = null;
     private TriggerReader trigger_right = null;
+    private TriggerReader trigger_left2 = null;
+    private TriggerReader trigger_right2 = null;
 
     @Override
     public void init() {
@@ -84,25 +87,32 @@ public class KiwiDrive extends OpMode {
         motor_left = new Motor(hardwareMap, "left");
         motor_right = new Motor(hardwareMap, "right");
         motor_slide = new Motor(hardwareMap, "slide");
+        motor_elevator = new Motor(hardwareMap,"elevator");
 
         motor_left.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_slide.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor_elevator.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         motor_left.setRunMode(Motor.RunMode.RawPower);
         motor_right.setRunMode(Motor.RunMode.RawPower);
         motor_slide.setRunMode(Motor.RunMode.RawPower);
+        motor_elevator.setRunMode(Motor.RunMode.RawPower);
+
         motor_left.setInverted(false);
         motor_right.setInverted(false);
         motor_slide.setInverted(false);
+        motor_elevator.setInverted(false);
+
 
         // setup some controller listeners
         gamepadex1 = new GamepadEx(gamepad1);
+        gamepadex2 = new GamepadEx(gamepad2);
 
-        //motor_elevator = hardwareMap.get(DcMotorEx.class, "elevator");
+        motor_elevator = new Motor(hardwareMap, "elevator");
 
-        //servo_claw_left = hardwareMap.get(Servo.class, "clawLeft");
-        //servo_claw_right = hardwareMap.get(Servo.class, "clawRight");
+        servo_claw_left = hardwareMap.get(Servo.class, "claw_left");
+        servo_claw_right = hardwareMap.get(Servo.class, "claw_right");
 
         // initialize holonomic drive
 
@@ -138,6 +148,7 @@ public class KiwiDrive extends OpMode {
 
         // make sure robot starts at correct position
         imu.resetYaw();
+        motor_elevator.resetEncoder();
     }
 
     @Override
@@ -150,8 +161,58 @@ public class KiwiDrive extends OpMode {
 
         telemetry.addData("time", time);
 
-        // let FTCLib updates it's button status
+        // let FTCLib update its button status
         gamepadex1.readButtons();
+        gamepadex2.readButtons();
+
+         int poslow = 672;
+         int posmed = 902;
+         int poshigh = 1142;
+
+         int lowlim = 0;
+         int highlim = 1142;
+
+         if (gamepadex2.getButton(GamepadKeys.Button.A)) {
+             if (motor_elevator.getCurrentPosition() < poslow) {
+                 motor_elevator.set(0.5);
+             } else if (motor_elevator.getCurrentPosition() >= poslow){
+                 motor_elevator.set(0);
+             }
+         }
+
+        if (gamepadex2.getButton(GamepadKeys.Button.B)) {
+            if (motor_elevator.getCurrentPosition() < posmed) {
+                motor_elevator.set(0.5);
+            } else if (motor_elevator.getCurrentPosition() >= posmed){
+                motor_elevator.set(0);
+            }
+        }
+
+        if (gamepadex2.getButton(GamepadKeys.Button.Y)) {
+            if (motor_elevator.getCurrentPosition() < poshigh) {
+                motor_elevator.set(0.5);
+            } else if (motor_elevator.getCurrentPosition() >= poshigh){
+                motor_elevator.set(0);
+            }
+        }
+
+
+        telemetry.addData("elevator_position", motor_elevator.getCurrentPosition());
+        if (gamepadex2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            if (motor_elevator.getCurrentPosition() < highlim) {
+                motor_elevator.set(0.5);
+                telemetry.addData("elevator","up");
+            }
+        } else if (gamepadex2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+            if (motor_elevator.getCurrentPosition() > lowlim) {
+                motor_elevator.set(-0.5);
+                telemetry.addData("elevator","down");
+            }
+        } else {
+            motor_elevator.set(0);
+            telemetry.addData("elevator","stop");
+        }
+
 
         // left / right BUMPERs switch mode
         if (gamepadex1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
