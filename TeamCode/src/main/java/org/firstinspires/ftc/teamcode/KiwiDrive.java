@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,7 +34,7 @@ import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 @TeleOp(name="Kiwi: OpMode", group="Opmode")
 public class KiwiDrive extends OpMode {
-    // Declare OpMode motors.
+    // Declare OpMode motors objects.
     private Motor motor_left = null;
     private Motor motor_right = null;
     private Motor motor_slide = null;
@@ -48,8 +49,8 @@ public class KiwiDrive extends OpMode {
     private HDrive drive = null;
 
     // servos (for the claw)
-    private Servo servo_claw_left = null;
-    private Servo servo_claw_right = null;
+    private SimpleServo servo_claw_left = null;
+    private SimpleServo servo_claw_right = null;
 
     // time-tracking
     private double last_time = 0.0;
@@ -58,8 +59,8 @@ public class KiwiDrive extends OpMode {
     private int mode = 0;  // default
 
     // setup for various controls
-    private GamepadEx gamepadex1 = null;
-    private GamepadEx gamepadex2 = null;
+    private GamepadEx gamepadex1 = null; // this is driver?
+    private GamepadEx gamepadex2 = null; // this is operator?
     private ButtonReader bump_left = null;
     private ButtonReader bump_right = null;
     private ButtonReader button_a = null;
@@ -83,7 +84,7 @@ public class KiwiDrive extends OpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(imu_params);
 
-        // initialize motors
+        // initialize motors - connect to hardware
         motor_left = new Motor(hardwareMap, "left");
         motor_right = new Motor(hardwareMap, "right");
         motor_slide = new Motor(hardwareMap, "slide");
@@ -93,6 +94,7 @@ public class KiwiDrive extends OpMode {
         motor_right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_slide.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_elevator.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
 
         motor_left.setRunMode(Motor.RunMode.RawPower);
         motor_right.setRunMode(Motor.RunMode.RawPower);
@@ -104,15 +106,16 @@ public class KiwiDrive extends OpMode {
         motor_slide.setInverted(false);
         motor_elevator.setInverted(false);
 
+        servo_claw_left = hardwareMap.get(SimpleServo.class, "claw_left");
+        servo_claw_right = hardwareMap.get(SimpleServo.class, "claw_right");
 
         // setup some controller listeners
         gamepadex1 = new GamepadEx(gamepad1);
         gamepadex2 = new GamepadEx(gamepad2);
 
-        motor_elevator = new Motor(hardwareMap, "elevator");
+        //motor_elevator = new Motor(hardwareMap, "elevator");
 
-        servo_claw_left = hardwareMap.get(Servo.class, "claw_left");
-        servo_claw_right = hardwareMap.get(Servo.class, "claw_right");
+
 
         // initialize holonomic drive
 
@@ -164,17 +167,29 @@ public class KiwiDrive extends OpMode {
         // let FTCLib update its button status
         gamepadex1.readButtons();
         gamepadex2.readButtons();
-
+// Variables for elevator limits, drive train limits
          int poslow = 672;
          int posmed = 902;
          int poshigh = 1142;
-
+         double elevSpeed = 0.5; // range is 0 to 1
          int lowlim = 0;
          int highlim = 1142;
+         //servo variables only needed if we cant get Srs programmer to work;  if it works, then we'd set servos to 0 or 1, i.e. their new min/max angles
+        // int servoLeftMaxAngle = 0;
+        // int servoLeftMinAngle = 0;
+      //  int servoRightMaxAngle = 0;
+       // int servoRightMinAngle = 0;
+
+        // open claw fingers while button is pressed; confirm with drivers OR do binary: press once to grab, press again to release
+         if(gamepadex2.getButton(GamepadKeys.Button.DPAD_DOWN))// need to put in proper button for claw...
+            //  the direction of these needs to be tested before putting the fingers on the servos!!
+             servo_claw_left.setPosition(0);
+            servo_claw_right.setPosition(1);
+
 
          if (gamepadex2.getButton(GamepadKeys.Button.A)) {
              if (motor_elevator.getCurrentPosition() < poslow) {
-                 motor_elevator.set(0.5);
+                 motor_elevator.set(elevSpeed);
              } else if (motor_elevator.getCurrentPosition() >= poslow){
                  motor_elevator.set(0);
              }
@@ -182,7 +197,7 @@ public class KiwiDrive extends OpMode {
 
         if (gamepadex2.getButton(GamepadKeys.Button.B)) {
             if (motor_elevator.getCurrentPosition() < posmed) {
-                motor_elevator.set(0.5);
+                motor_elevator.set(elevSpeed);
             } else if (motor_elevator.getCurrentPosition() >= posmed){
                 motor_elevator.set(0);
             }

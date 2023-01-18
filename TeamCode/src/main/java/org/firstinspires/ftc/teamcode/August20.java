@@ -15,7 +15,7 @@ public class August20 extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws  InterruptedException {
         robotui = new DemoRobotInterface(hardwareMap, telemetry);
 
         waitForStart();
