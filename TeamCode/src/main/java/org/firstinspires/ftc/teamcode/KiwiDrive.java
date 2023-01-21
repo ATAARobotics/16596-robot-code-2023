@@ -1,4 +1,8 @@
 package org.firstinspires.ftc.teamcode;
+//  to connect/push code to hub via wifi you must:
+// (1) connect hub to laptop via usb
+// (2) go to "tools-external" and run " enable ADB over TCPIP"
+//  (3) if successful (exit code =0) then run " connect to ADB over wifi direct"
 
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -32,14 +36,14 @@ import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 
-@TeleOp(name="Kiwi: OpMode", group="Opmode")
+@TeleOp(name="Kiwi_test: OpMode", group="Opmode")
 public class KiwiDrive extends OpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
     private Motor motor_right = null;
     private Motor motor_slide = null;
 
-    private Motor motor_elevator = null;
+    private Motor elevator_motor= null;
     //private NormalizedColorSensor colorSensor = null;
 
     // Inertial Measurement Unit
@@ -49,8 +53,8 @@ public class KiwiDrive extends OpMode {
     private HDrive drive = null;
 
     // servos (for the claw)
-    private SimpleServo servo_claw_left = null;
-    private SimpleServo servo_claw_right = null;
+    private Servo servo_claw_left = null;
+    private Servo servo_claw_right = null;
 
     // time-tracking
     private double last_time = 0.0;
@@ -88,32 +92,32 @@ public class KiwiDrive extends OpMode {
         motor_left = new Motor(hardwareMap, "left");
         motor_right = new Motor(hardwareMap, "right");
         motor_slide = new Motor(hardwareMap, "slide");
-        motor_elevator = new Motor(hardwareMap,"elevator");
+        elevator_motor= new Motor(hardwareMap,"elevator");
 
         motor_left.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_slide.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        motor_elevator.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        elevator_motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
 
         motor_left.setRunMode(Motor.RunMode.RawPower);
         motor_right.setRunMode(Motor.RunMode.RawPower);
         motor_slide.setRunMode(Motor.RunMode.RawPower);
-        motor_elevator.setRunMode(Motor.RunMode.RawPower);
+        elevator_motor.setRunMode(Motor.RunMode.RawPower);
 
         motor_left.setInverted(false);
         motor_right.setInverted(false);
         motor_slide.setInverted(false);
-        motor_elevator.setInverted(false);
+        elevator_motor.setInverted(false);
 
-        servo_claw_left = hardwareMap.get(SimpleServo.class, "claw_left");
-        servo_claw_right = hardwareMap.get(SimpleServo.class, "claw_right");
+        servo_claw_left = hardwareMap.get(Servo.class, "servo_left");
+        servo_claw_right = hardwareMap.get(Servo.class, "servo_right");
 
         // setup some controller listeners
         gamepadex1 = new GamepadEx(gamepad1);
         gamepadex2 = new GamepadEx(gamepad2);
 
-        //motor_elevator = new Motor(hardwareMap, "elevator");
+      elevator_motor.resetEncoder();
 
 
 
@@ -151,7 +155,11 @@ public class KiwiDrive extends OpMode {
 
         // make sure robot starts at correct position
         imu.resetYaw();
-        motor_elevator.resetEncoder();
+        elevator_motor.resetEncoder();
+       // servo_claw_right.setPosition(0.75);
+      //  servo_claw_left.setPosition(0.5);
+
+
     }
 
     @Override
@@ -162,7 +170,12 @@ public class KiwiDrive extends OpMode {
         double diff = time - last_time;
         last_time = time;
 
+        servo_claw_left.setPosition(0.5);// temporary for testing
+        servo_claw_right.setPosition((0.5));
+
         telemetry.addData("time", time);
+        telemetry.addData("left servo:  ",servo_claw_left.getPosition()); // temporary for testing
+        telemetry.addData("right servo:  ",servo_claw_right.getPosition()); // temporary for testing
 
         // let FTCLib update its button status
         gamepadex1.readButtons();
@@ -171,7 +184,7 @@ public class KiwiDrive extends OpMode {
          int poslow = 672;
          int posmed = 902;
          int poshigh = 1142;
-         double elevSpeed = 0.5; // range is 0 to 1
+         double elevSpeed = 0.65; // range is 0 to 1
          int lowlim = 0;
          int highlim = 1142;
          //servo variables only needed if we cant get Srs programmer to work;  if it works, then we'd set servos to 0 or 1, i.e. their new min/max angles
@@ -181,62 +194,61 @@ public class KiwiDrive extends OpMode {
        // int servoRightMinAngle = 0;
 
         // open claw fingers while button is pressed; confirm with drivers OR do binary: press once to grab, press again to release
-         if(gamepadex2.getButton(GamepadKeys.Button.DPAD_DOWN))// need to put in proper button for claw...
+         //if(gamepadex2.getButton(GamepadKeys.Button.LEFT_BUMPER))// need to put in proper button for claw...
             //  the direction of these needs to be tested before putting the fingers on the servos!!
-             servo_claw_left.setPosition(0);
-            servo_claw_right.setPosition(1);
+            //servo_claw_left.setPosition(0);
 
+//====================  disabled elevattor presets ===========================================
+        /*if (gamepadex2.getButton(GamepadKeys.Button.X)) {
+            if (elevator_motor.getCurrentPosition() > lowlim) {
+                elevator_motor.set(-elevSpeed);
+            } else if (elevator_motor.getCurrentPosition() <= lowlim) {
+                elevator_motor.set(0);
+            }
+        }
 
          if (gamepadex2.getButton(GamepadKeys.Button.A)) {
-             if (motor_elevator.getCurrentPosition() < poslow) {
-                 motor_elevator.set(elevSpeed);
-             } else if (motor_elevator.getCurrentPosition() >= poslow){
-                 motor_elevator.set(0);
+             if (elevator_motor.getCurrentPosition() < poslow) {
+                 elevator_motor.set(elevSpeed*2);
+             } else if (elevator_motor.getCurrentPosition() >= poslow) {
+                 elevator_motor.set(0);
              }
          }
 
         if (gamepadex2.getButton(GamepadKeys.Button.B)) {
-            if (motor_elevator.getCurrentPosition() < posmed) {
-                motor_elevator.set(elevSpeed);
-            } else if (motor_elevator.getCurrentPosition() >= posmed){
-                motor_elevator.set(0);
+            if (elevator_motor.getCurrentPosition() < posmed) {
+                elevator_motor.set(elevSpeed);
+            } else if (elevator_motor.getCurrentPosition() >= posmed) {
+                elevator_motor.set(0);
             }
-        }
+        }*/
 
-        if (gamepadex2.getButton(GamepadKeys.Button.Y)) {
-            if (motor_elevator.getCurrentPosition() < poshigh) {
-                motor_elevator.set(0.5);
-            } else if (motor_elevator.getCurrentPosition() >= poshigh){
-                motor_elevator.set(0);
-            }
-        }
-
-
-        telemetry.addData("elevator_position", motor_elevator.getCurrentPosition());
+        telemetry.addData("elevator_position", elevator_motor.getCurrentPosition());
         if (gamepadex2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            if (motor_elevator.getCurrentPosition() < highlim) {
-                motor_elevator.set(0.5);
+            if (elevator_motor.getCurrentPosition() <= highlim) {
+                elevator_motor.set(elevSpeed);
                 telemetry.addData("elevator","up");
             }
         } else if (gamepadex2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            if (motor_elevator.getCurrentPosition() > lowlim) {
-                motor_elevator.set(-0.5);
+            if (elevator_motor.getCurrentPosition() >= lowlim) {
+                elevator_motor.set(-elevSpeed);
                 telemetry.addData("elevator","down");
             }
         } else {
-            motor_elevator.set(0);
+            elevator_motor.set(0);
             telemetry.addData("elevator","stop");
         }
 
 
-        // left / right BUMPERs switch mode
+        /*// left / right BUMPERs switch mode
         if (gamepadex1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             mode -= 1;
         } else if (gamepadex1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
             mode += 1;
         }
         if (mode < 0) mode = 2;
-        if (mode > 2) mode = 0;
+        if (mode > 2) mode = 0;*/
+        mode = 1;
         telemetry.addData("mode", mode);
 
         // allow us to reset the yaw?
@@ -254,7 +266,8 @@ public class KiwiDrive extends OpMode {
         }
         drive.setMaxSpeed(max_speed);
         telemetry.addData("max_speed", max_speed);
-        telemetry.addData("trigger", gamepadex1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+        telemetry.addData("Right_trigger", gamepadex1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+        telemetry.addData("Left trigger", gamepadex1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
         if (mode == 0) {
             // simple at first: left-strick forward/back + turn
@@ -288,5 +301,9 @@ public class KiwiDrive extends OpMode {
     public void stop() {
         // Executed once immediately after a user presses Stop (◼) on
         // the Driver Station
+
+        // servo reset to zero, temp for testing
+         servo_claw_right.setPosition(0);
+         servo_claw_left.setPosition(0);
     }
 }
