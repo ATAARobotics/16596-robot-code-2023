@@ -36,7 +36,7 @@ import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 
-@TeleOp(name="Kiwi_test: OpMode", group="Opmode")
+@TeleOp(name="Kiwi_test1: OpMode", group="Opmode")
 public class KiwiDrive extends OpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -156,8 +156,8 @@ public class KiwiDrive extends OpMode {
         // make sure robot starts at correct position
         imu.resetYaw();
         elevator_motor.resetEncoder();
-       // servo_claw_right.setPosition(0.75);
-      //  servo_claw_left.setPosition(0.5);
+       // servo_claw_right.setPosition(0);
+        servo_claw_left.setPosition(0.35);
 
 
     }
@@ -170,8 +170,8 @@ public class KiwiDrive extends OpMode {
         double diff = time - last_time;
         last_time = time;
 
-        servo_claw_left.setPosition(0.5);// temporary for testing
-        servo_claw_right.setPosition((0.5));
+       //servo_claw_left.setPosition(0.5);// temporary for testing
+       //servo_claw_right.setPosition((0.5));
 
         telemetry.addData("time", time);
         telemetry.addData("left servo:  ",servo_claw_left.getPosition()); // temporary for testing
@@ -248,7 +248,7 @@ public class KiwiDrive extends OpMode {
         }
         if (mode < 0) mode = 2;
         if (mode > 2) mode = 0;*/
-        mode = 1;
+        mode = 2;
         telemetry.addData("mode", mode);
 
         // allow us to reset the yaw?
@@ -293,7 +293,18 @@ public class KiwiDrive extends OpMode {
                 heading
             );
         }
-
+// Grab a cone:
+        if (gamepadex2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+            servo_claw_right.setPosition(0.41);
+            servo_claw_left.setPosition(0.33);
+            //telemetry.addData("claw","has cone");
+        }
+// Release a cone:
+        if (gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+            servo_claw_right.setPosition(0.45);
+            servo_claw_left.setPosition(0.25);
+            //telemetry.addData("claw","can take cone");
+        }
         telemetry.update();
     }
 
@@ -302,8 +313,8 @@ public class KiwiDrive extends OpMode {
         // Executed once immediately after a user presses Stop (◼) on
         // the Driver Station
 
-        // servo reset to zero, temp for testing
-         servo_claw_right.setPosition(0);
-         servo_claw_left.setPosition(0);
+        // servo reset  to release cone, if has cone zero
+        servo_claw_right.setPosition(0.45);
+        servo_claw_left.setPosition(0.25);
     }
 }
