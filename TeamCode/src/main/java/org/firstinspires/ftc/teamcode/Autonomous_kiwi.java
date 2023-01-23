@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.drivebase.HDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+@Autonomous(name="Kiwi_auto_1", group="Opmode")
 public class Autonomous_kiwi extends LinearOpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -65,6 +67,25 @@ public class Autonomous_kiwi extends LinearOpMode {
 
         servo_claw_left = hardwareMap.get(Servo.class, "servo_left");
         servo_claw_right = hardwareMap.get(Servo.class, "servo_right");
+
+        elevator_motor.resetEncoder();
+
+        // initialize holonomic drive
+
+        // first three arguments are the motors themselves, the next
+        // three numbers are 'angles' for the motors -- this is their
+        // mounting angle, relative to "0" being "forward"
+
+        // NOTE NOTE!
+        //    0. The angle "0" is straight ahead
+        //    1. Angles are "right-hand coordinate" so "20" means "20 degress counter-clockwise"
+        //    2. The motors ARE NOT IN counter-clockwise order! (you specify left, then right)
+        //    3. Most angles are in RADIANS internally in ftclib (including these)
+        drive = new HDrive(
+                motor_left, motor_right, motor_slide,
+                Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
+        );
+        drive.setMaxSpeed(0.50); // 0.0 to 1.0, percentage of "max"
 
         waitForStart();
         while (opModeIsActive())
