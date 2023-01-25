@@ -252,9 +252,9 @@ public class KiwiDrive extends OpMode {
         telemetry.addData("mode", mode);
 
         // allow us to reset the yaw?
-        if (gamepadex1.wasJustPressed(GamepadKeys.Button.A)) {
-            imu.resetYaw();
-        }
+      //  if (gamepadex1.wasJustPressed(GamepadKeys.Button.A)) {
+      //      imu.resetYaw();
+     //   }
         // speed controls (percentage of max)
         double max_speed = 0.45;
         if (gamepadex1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5){
