@@ -36,7 +36,7 @@ import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 
-@TeleOp(name="Kiwi_test1: OpMode", group="Opmode")
+@TeleOp(name="Kiwi_comp_1", group="Opmode")
 public class KiwiDrive extends OpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -289,7 +289,7 @@ public class KiwiDrive extends OpMode {
             drive.driveFieldCentric(
                 gamepad1.left_stick_x,
                 gamepad1.left_stick_y,
-                gamepad1.right_stick_x * 0.75,
+                gamepad1.right_stick_x /2,
                 heading
             );
         }

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Kiwi_auto_StrafeLeft", group="Opmode")
+@Autonomous(name="Kiwi_auto_StrafeLeft_1", group="Opmode")
 public class Auto_kiwi_strafeLeft extends LinearOpMode {
 
     // Declare OpMode motors objects.
@@ -89,7 +89,7 @@ public class Auto_kiwi_strafeLeft extends LinearOpMode {
                 motor_left, motor_right, motor_slide,
                 Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
         );
-        drive.setMaxSpeed(0.50); // 0.0 to 1.0, percentage of "max"
+        drive.setMaxSpeed(0.75); // 0.0 to 1.0, percentage of "max"
 
 
         Timing.Timer autoTime = new Timing.Timer((long) 1.25, TimeUnit.SECONDS);
@@ -99,11 +99,11 @@ public class Auto_kiwi_strafeLeft extends LinearOpMode {
         // put auto drive commands here
         // drive ahead to parking spot
 
-        double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+       // double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         while(!autoTime.done()) {
             // drive values are: strafeSpeed, forward speed, turn, heading
-           // double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             drive.driveFieldCentric(-0.75, 0, 0, heading);
 
         }

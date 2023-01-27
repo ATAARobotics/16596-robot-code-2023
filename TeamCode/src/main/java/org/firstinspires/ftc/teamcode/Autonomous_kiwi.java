@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Kiwi_auto_StrafeRight", group="Opmode")
+@Autonomous(name="Kiwi_auto_StrafeRight_1", group="Opmode")
 public class Autonomous_kiwi extends LinearOpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -102,11 +102,11 @@ public class Autonomous_kiwi extends LinearOpMode {
 
             autoTime.start();
 
-            double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+           // double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             while (!autoTime.done()) {
                 // drive values are: strafeSpeed, forward speed, turn, heading
-                //double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
                 drive.driveFieldCentric(0.75, 0, 0, heading);
 
             }
