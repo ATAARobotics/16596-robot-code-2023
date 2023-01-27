@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import java.util.concurrent.TimeUnit;
+
 @Autonomous(name="Kiwi_auto_StrafeRight", group="Opmode")
 public class Autonomous_kiwi extends LinearOpMode {
     // Declare OpMode motors objects.
@@ -92,23 +95,26 @@ public class Autonomous_kiwi extends LinearOpMode {
 
             // put auto drive commands here
             // drive ahead to parking spot
+       Timing.Timer autoTime = new Timing.Timer((long) 1.25, TimeUnit.SECONDS);
 
-        Timing.Timer timer = new Timing.Timer(2000);
+        //Timing.Timer autoTime = new Timing.Timer(2000);
 
 
-            timer.start();
+            autoTime.start();
 
             double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-            if(!timer.done()) {
+            while (!autoTime.done()) {
                 // drive values are: strafeSpeed, forward speed, turn, heading
-                drive.driveFieldCentric(0.5, 0, 0, heading);
+                //double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                drive.driveFieldCentric(0.75, 0, 0, heading);
+
             }
 
 
             // do next command or stop
-
-            drive.driveFieldCentric(0, 0,0,heading);
+        //double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+         //   drive.driveFieldCentric(0, 0,0,heading);
 
 
     }

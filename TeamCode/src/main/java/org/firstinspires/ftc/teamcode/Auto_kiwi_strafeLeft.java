@@ -91,27 +91,27 @@ public class Auto_kiwi_strafeLeft extends LinearOpMode {
         );
         drive.setMaxSpeed(0.50); // 0.0 to 1.0, percentage of "max"
 
-       // Timing double timer = new Timing(2000);
-        Timing.Timer autoTime = new Timing.Timer(2, TimeUnit.SECONDS);
 
+        Timing.Timer autoTime = new Timing.Timer((long) 1.25, TimeUnit.SECONDS);
+        //Timing.Timer autoTime = new Timing.Timer(2000);
         waitForStart();
-autoTime.start();
+        autoTime.start();
         // put auto drive commands here
         // drive ahead to parking spot
 
-
-
         double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        if(!autoTime.done()) {
+        while(!autoTime.done()) {
             // drive values are: strafeSpeed, forward speed, turn, heading
-            drive.driveFieldCentric(-0.5, 0, 0, heading);
+           // double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            drive.driveFieldCentric(-0.75, 0, 0, heading);
+
         }
 
 
         // do next command or stop
-
-        drive.driveFieldCentric(0, 0,0,heading);
+        //double heading = - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+      //  drive.driveFieldCentric(0, 0,0,heading);
 
 
     }

@@ -136,7 +136,7 @@ public class KiwiDrive extends OpMode {
             motor_left, motor_right, motor_slide,
             Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
         );
-        drive.setMaxSpeed(0.50); // 0.0 to 1.0, percentage of "max"
+        drive.setMaxSpeed(0.90); // 0.0 to 1.0, percentage of "max"
 
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -186,7 +186,7 @@ public class KiwiDrive extends OpMode {
          int poshigh = 1142;
          double elevSpeed = 0.65; // range is 0 to 1
          int lowlim = 0;
-         int highlim = 1142;
+         int highlim = 970;
          //servo variables only needed if we cant get Srs programmer to work;  if it works, then we'd set servos to 0 or 1, i.e. their new min/max angles
         // int servoLeftMaxAngle = 0;
         // int servoLeftMinAngle = 0;
@@ -231,7 +231,7 @@ public class KiwiDrive extends OpMode {
             }
         } else if (gamepadex2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
             if (elevator_motor.getCurrentPosition() >= lowlim) {
-                elevator_motor.set(-elevSpeed);
+                elevator_motor.set(-.7*elevSpeed);
                 telemetry.addData("elevator","down");
             }
         } else {
@@ -256,13 +256,13 @@ public class KiwiDrive extends OpMode {
       //      imu.resetYaw();
      //   }
         // speed controls (percentage of max)
-        double max_speed = 0.45;
+        double max_speed = 0.65;
         if (gamepadex1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5){
             // if left-trigger "pressed"
             max_speed = 0.30;
         } else if (gamepadex1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
             // if ONLY right-trigger "pressed"
-            max_speed = 0.65;
+            max_speed = 1;
         }
         drive.setMaxSpeed(max_speed);
         telemetry.addData("max_speed", max_speed);
