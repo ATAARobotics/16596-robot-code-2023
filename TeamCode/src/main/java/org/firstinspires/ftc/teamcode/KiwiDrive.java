@@ -296,7 +296,7 @@ public class KiwiDrive extends OpMode {
 // Grab a cone:
         if (gamepadex2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             servo_claw_right.setPosition(0.41);
-            servo_claw_left.setPosition(0.33);
+            servo_claw_left.setPosition(0.4);
             //telemetry.addData("claw","has cone");
         }
 // Release a cone:

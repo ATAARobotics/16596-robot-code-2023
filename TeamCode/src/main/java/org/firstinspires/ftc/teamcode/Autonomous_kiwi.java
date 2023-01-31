@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Kiwi_auto_StrafeRight_1", group="Opmode")
+@Autonomous(name="Kiwi_auto_StrafeRight_1  ", group="Opmode")
 public class Autonomous_kiwi extends LinearOpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -89,13 +89,13 @@ public class Autonomous_kiwi extends LinearOpMode {
                 motor_left, motor_right, motor_slide,
                 Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
         );
-        drive.setMaxSpeed(0.50); // 0.0 to 1.0, percentage of "max"
+        drive.setMaxSpeed(0.75); // 0.0 to 1.0, percentage of "max"
 
         waitForStart();
 
             // put auto drive commands here
             // drive ahead to parking spot
-       Timing.Timer autoTime = new Timing.Timer((long) 1.25, TimeUnit.SECONDS);
+       Timing.Timer autoTime = new Timing.Timer((long) 1, TimeUnit.SECONDS);
 
         //Timing.Timer autoTime = new Timing.Timer(2000);
 

@@ -89,10 +89,10 @@ public class Auto_kiwi_strafeLeft extends LinearOpMode {
                 motor_left, motor_right, motor_slide,
                 Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
         );
-        drive.setMaxSpeed(0.75); // 0.0 to 1.0, percentage of "max"
+        drive.setMaxSpeed(0.6); // 0.0 to 1.0, percentage of "max"
 
 
-        Timing.Timer autoTime = new Timing.Timer((long) 1.25, TimeUnit.SECONDS);
+        Timing.Timer autoTime = new Timing.Timer((long)1 , TimeUnit.SECONDS);
         //Timing.Timer autoTime = new Timing.Timer(2000);
         waitForStart();
         autoTime.start();
