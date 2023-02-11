@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-//  to connect/push code to hub via wifi you must:
-// (1) connect hub to laptop via usb
+//  to connect/push code to DS phone  via wifi you must:
+// (1) connect DS phone to laptop via usb
 // (2) go to "tools-external" and run " enable ADB over TCPIP"
 //  (3) if successful (exit code =0) then run " connect to ADB over wifi direct"
 
@@ -36,7 +36,7 @@ import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 
-@TeleOp(name="Kiwi_comp_1", group="Opmode")
+@TeleOp(name="Kiwi_comp_2_newclaw", group="Opmode")
 public class KiwiDrive extends OpMode {
     // Declare OpMode motors objects.
     private Motor motor_left = null;
@@ -98,7 +98,6 @@ public class KiwiDrive extends OpMode {
         motor_right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_slide.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         elevator_motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
 
         motor_left.setRunMode(Motor.RunMode.RawPower);
         motor_right.setRunMode(Motor.RunMode.RawPower);
@@ -256,7 +255,7 @@ public class KiwiDrive extends OpMode {
       //      imu.resetYaw();
      //   }
         // speed controls (percentage of max)
-        double max_speed = 0.65;
+        double max_speed = 0.45;
         if (gamepadex1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5){
             // if left-trigger "pressed"
             max_speed = 0.30;
@@ -295,15 +294,20 @@ public class KiwiDrive extends OpMode {
         }
 // Grab a cone:
         if (gamepadex2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            servo_claw_right.setPosition(0.41);
-            servo_claw_left.setPosition(0.4);
-            //telemetry.addData("claw","has cone");
+          //  servo_claw_right.setPosition(0.41);
+        //    servo_claw_left.setPosition(0.4);
+              servo_claw_right.setPosition(1);
+              servo_claw_left.setPosition(0);
+              telemetry.addData("claw","has cone");
         }
+
 // Release a cone:
         if (gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-            servo_claw_right.setPosition(0.45);
-            servo_claw_left.setPosition(0.25);
-            //telemetry.addData("claw","can take cone");
+           // servo_claw_right.setPosition(0.45); old claw
+           // servo_claw_left.setPosition(0.25); old claw
+            servo_claw_right.setPosition(0);
+            servo_claw_left.setPosition(1);
+            telemetry.addData("claw","can take cone");
         }
         telemetry.update();
     }

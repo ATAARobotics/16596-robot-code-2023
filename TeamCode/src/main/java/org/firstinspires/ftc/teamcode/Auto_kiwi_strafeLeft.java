@@ -95,6 +95,8 @@ public class Auto_kiwi_strafeLeft extends LinearOpMode {
         Timing.Timer autoTime = new Timing.Timer((long)1 , TimeUnit.SECONDS);
         //Timing.Timer autoTime = new Timing.Timer(2000);
         waitForStart();
+
+        imu.resetYaw();
         autoTime.start();
         // put auto drive commands here
         // drive ahead to parking spot

@@ -91,6 +91,8 @@ public class Autonomous_kiwi extends LinearOpMode {
         );
         drive.setMaxSpeed(0.75); // 0.0 to 1.0, percentage of "max"
 
+        imu.resetYaw();
+
         waitForStart();
 
             // put auto drive commands here
