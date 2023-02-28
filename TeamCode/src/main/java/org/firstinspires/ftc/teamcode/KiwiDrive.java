@@ -135,7 +135,7 @@ public class KiwiDrive extends OpMode {
             motor_left, motor_right, motor_slide,
             Math.toRadians(60), Math.toRadians(300), Math.toRadians(180)
         );
-        drive.setMaxSpeed(0.90); // 0.0 to 1.0, percentage of "max"
+        drive.setMaxSpeed(0.70); // 0.0 to 1.0, percentage of "max"
 
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -261,7 +261,7 @@ public class KiwiDrive extends OpMode {
             max_speed = 0.30;
         } else if (gamepadex1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
             // if ONLY right-trigger "pressed"
-            max_speed = 1;
+            max_speed = 0.75;
         }
         drive.setMaxSpeed(max_speed);
         telemetry.addData("max_speed", max_speed);
@@ -293,6 +293,7 @@ public class KiwiDrive extends OpMode {
             );
         }
 // Grab a cone:
+       // if(gamepadex2.isDown(GamePadKeys))
         if (gamepadex2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
           //  servo_claw_right.setPosition(0.41);
         //    servo_claw_left.setPosition(0.4);
