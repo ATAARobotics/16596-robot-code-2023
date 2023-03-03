@@ -1,26 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.HDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.concurrent.TimeUnit;
 
 @Autonomous(name="Kiwi_auto_colour2  ", group="autonomous")
 public class KiwiAutoWithColour extends LinearOpMode {
@@ -108,73 +101,84 @@ public class KiwiAutoWithColour extends LinearOpMode {
         );
         drive.setMaxSpeed(0.75); // 0.0 to 1.0, percentage of "max"
         imu.resetYaw();
-      // double elevateSP = 80 ;  // above the top of the cone so we can drive up to the cone
+        // double elevateSP = 80 ;  // above the top of the cone so we can drive up to the cone
         waitForStart();
         // Get the color sensor from hardwareMap
-        color = hardwareMap.get(ColorSensor.class, "color");
-       // elevator_motor.resetEncoder();
+
+        // set time for autosteps
+        double step_gotocone = 2;
+        double step_readColour = 2;
+        double step_strafeRIght = 1;
+        double step_strafeLeft = 1;
+
+        // elevator_motor.resetEncoder();
         color.enableLed(false);
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
         // If colour is red(1), then strage left , else if blue(3) strafe right, else stay at signal code (2)
         // Step 1:  Drive forward for X seconds
         // drive values are: strafeSpeed, forward speed, turn, heading
-       double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         runtime.reset();
 
         // raise elevator out of way of colour sensor
-        while(elevator_motor.getCurrentPosition() < 80){
+        while (elevator_motor.getCurrentPosition() < 80) {
             elevator_motor.set(.35);
-            telemetry.addData("elevator: ",elevator_motor.getCurrentPosition());
+            telemetry.addData("elevator: ", elevator_motor.getCurrentPosition());
             telemetry.update();
         }
+        // stop the elevator and move to get the colour:
+        elevator_motor.set(0);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < step_gotocone)) {
 
 
             drive.driveFieldCentric(0, -0.6, 0, heading);
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-          //  double distance_mm = distance.getDistance(DistanceUnit.MM);
+            //  double distance_mm = distance.getDistance(DistanceUnit.MM);
 
             update_colour();
-            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-
             // get encoder colour values:
-            telemetry.addData("detected:  ", update_colour());
-            telemetry.addData("heading :  ",heading);
-            //telemetry.addData("distance:  ", distance_mm);
 
-          //  telemetry.addData(("leftEncoder",motor_left.getDistance());
-            telemetry.addData("rightEncoder",motor_left.getDistance());
+            telemetry.addData("detected:  ", update_colour());
+            telemetry.addData("heading :  ", heading);
+            //telemetry.addData("distance:  ", distance_mm);  // this started throwing exception when program was run??
+            telemetry.addData("rightEncoder", motor_left.getDistance());  //see if this works , else delete it
+            telemetry.addData("corrected distance =  ", motor_left.getDistance() / Math.sin(60));
             telemetry.update();
         }
         //step 2:
         // stop and read colour:
-        while(opModeIsActive() && (runtime.seconds() < 3)){
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < step_readColour)) {
             drive.driveFieldCentric(0, 0, 0, heading);
             update_colour();
-            telemetry.addData("colour I see is:  ",update_colour());
+            telemetry.addData("colour I see is:  ", update_colour());
             telemetry.update();
         }
+        runtime.reset();
 
-       // step 3: decide to go left,right or park
-        while (opModeIsActive() && (runtime.seconds() < 5.0)){
-            if(update_colour() == "red" ){ // red is strafe left
-                drive.driveFieldCentric(-.25,  0, 0, heading);
+        // step 3: decide to go left,right or park
+        while (opModeIsActive() && (runtime.seconds() < step_strafeLeft)) {
+            if (update_colour() == "red") { // red is strafe left
+                drive.driveFieldCentric(-.25, 0, 0, heading);
                 telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-                telemetry.addData("I am going left!",runtime.seconds());
+                telemetry.addData("I am going left!", runtime.seconds());
                 telemetry.update();
             }
-            if(update_colour() == "blue" && (runtime.seconds() <5)){ // blue is strafe right
-                drive.driveFieldCentric(.25,0,0,heading);
+            drive.driveFieldCentric(0, 0, 0, heading);  // stop moving
+            runtime.reset();
+
+            if (update_colour() == "blue" && (runtime.seconds() < step_strafeRIght)) { // blue is strafe right
+                drive.driveFieldCentric(.25, 0, 0, heading);
                 telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-                telemetry.addData("I am going right","");
+                telemetry.addData("I am going right", "");
                 telemetry.update();
 
             }
             // otherwise stay where we are:
-
+            drive.driveFieldCentric(0, 0, 0, heading);
         }
 
 
